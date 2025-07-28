@@ -92,3 +92,30 @@ export const getProfile = async (req, res) => {
         console.log(error);
     }
 }
+
+export const getProfiles = async (req, res) => {
+        // récupération du role de l'utilisateur à partir du token
+    // le token est vérifié par le middleware checkToken
+    const isAdmin = req.user.admin;
+
+    // si il a rôle different soit 0 l'utilisateur ne peux pas y acceder
+    if (isAdmin !== 1) {
+        return res.status(403).json({ message: "Accès interdit : réservé aux administrateurs" });
+    }
+
+
+     try {
+        const [result] = await userModels.getAllProfile();
+        
+        if (result.length > 0) {
+            res.status(200).json(result);
+        
+        } else {
+            res.status(404).json({message: "utilisateur non trouvé"});
+        }
+
+    } catch (error) {
+        res.status(500).json({message: "erreur lors de la récupération du profil", error});
+        console.log(error);
+    }
+}

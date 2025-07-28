@@ -22,3 +22,10 @@ export const getProfileUser = (id_user) => {
     // Exécute la requête de sélection avec l'ID utilisateur fourni
     return db.query(getProfile, [id_user]);
 }
+
+export const getAllProfile = () => {
+    const getProfile = "SELECT id_user, username, mail, admin FROM users;";
+
+    // Exécute la requête de sélection avec le role 
+    return db.query(getProfile);
+}
