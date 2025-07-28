@@ -46,8 +46,10 @@ export const login = async (req, res) => {
             
             if (checkPassword == true){
 
-                // création du token
-                const token = jwt.sign({idUser: userData.idUser, username: userData.username}, process.env.SECRET_KEY, {expiresIn: "6h"});
+
+
+                // création du token : données : iduser + username + admin : 0/1
+                const token = jwt.sign({idUser: userData.id_user, username: userData.username, admin: userData.admin}, process.env.SECRET_KEY, {expiresIn: "6h"});
 
                 res.status(201).json({
                     message: "connexion autorisé",
@@ -66,5 +68,27 @@ export const login = async (req, res) => {
         res.status(500).json({message: "erreur lors de la connexion", error})
         console.log(error);
 
+    }
+}
+
+//récupération de son profil perso grâce au token
+export const getProfile = async (req, res) => {
+        // récupération de l'id de l'utilisateur à partir du token
+    // le token est vérifié par le middleware checkToken
+    const idUser = req.user.idUser;
+
+     try {
+        const [result] = await userModels.getProfileUser(idUser);
+        
+        if (result.length > 0) {
+            res.status(200).json(result[0]);
+        
+        } else {
+            res.status(404).json({message: "utilisateur non trouvé"});
+        }
+
+    } catch (error) {
+        res.status(500).json({message: "erreur lors de la récupération du profil", error});
+        console.log(error);
     }
 }
