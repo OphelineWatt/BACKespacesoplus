@@ -29,3 +29,42 @@ export const register = async (req, res) => {
         
     }
 }
+
+export const login = async (req, res) => {
+    const {mail, password} = req.body;
+    try{
+
+        
+        // cette fonction permet de récupérer les données de l'utilisateur à partir de son mail
+        const [result] = await userModels.loginUser(mail);
+
+        const userData = result[0];
+
+        if (result){
+
+            const checkPassword = await bcrypt.compare(password, userData.password);
+            
+            if (checkPassword == true){
+
+                // création du token
+                const token = jwt.sign({idUser: userData.idUser, username: userData.username}, process.env.SECRET_KEY, {expiresIn: "6h"});
+
+                res.status(201).json({
+                    message: "connexion autorisé",
+                    token: token
+                });
+            } else {
+                res.status(403).json({message: "accès refusé"});
+            }
+
+        } else {
+            res.status(104).json({message: "utilisateur inconnu"})
+        }
+
+    } catch (error) {
+
+        res.status(500).json({message: "erreur lors de la connexion", error})
+        console.log(error);
+
+    }
+}
