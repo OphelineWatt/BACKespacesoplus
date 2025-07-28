@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import bdd from "./configuration/bd.js";
+import userRoutes from "./routes/userRoutes.js"
 
 
 
@@ -15,7 +16,7 @@ app.use(express.json());
 dotenv.config();
 
 // utilisation des routes
-// app.use("/api");
+app.use("/api", userRoutes);
 
 // démarrage du server sur le port défini dans le fichier .env
 app.listen(process.env.PORT, () => {
