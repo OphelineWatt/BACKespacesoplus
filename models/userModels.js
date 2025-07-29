@@ -64,3 +64,11 @@ export const updateUserPassword = (cryptedNewPassword, userId) => {
     // Exécute la requête de mise à jour avec le nouveau mot de passe et l'ID utilisateur
     return db.query(updatePassword, [cryptedNewPassword, userId]);
 }
+
+export const deleteUserByAdmin= (idUser) => {
+    
+    const deleteProfile = `DELETE FROM users WHERE id_user = ?;`;
+
+    // Exécute la requête de sélection avec l'ID utilisateur fourni
+    return db.query(deleteProfile, [idUser]);
+}

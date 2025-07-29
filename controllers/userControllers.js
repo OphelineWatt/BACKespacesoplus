@@ -234,3 +234,33 @@ export const updatePassword = async (req, res) => {
         console.log(error);
     }
 }
+
+export const deleteProfiles = async (req, res) => {
+  // récupération du role de l'utilisateur à partir du token
+  // le token est vérifié par le middleware checkToken
+  const isAdmin = req.user.admin;
+
+  const idUser = req.params.idUser
+
+  // si il a rôle different soit 0 l'utilisateur ne peux pas y acceder
+  if (isAdmin !== 1) {
+    return res
+      .status(403)
+      .json({ message: "Accès interdit : réservé aux administrateurs" });
+  }
+
+  try {
+    
+    await userModels.deleteUserByAdmin(idUser);
+
+    console.log(req.params);
+    
+    
+      res.status(200).json({message: "profil suprimé"});
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "erreur lors de la supression du profil", error });
+    console.log(error);
+  }
+};
