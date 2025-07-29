@@ -2,6 +2,7 @@ import dotenv from "dotenv";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import * as userModels from "../models/userModels.js";
+import {transporter, mailRegister} from '../configuration/mail.js'
 
 dotenv.config();
 
@@ -33,6 +34,14 @@ export const register = async (req, res) => {
     // cette fonction permet d'insérer un nouvel utilisateur dans la base de données
     await userModels.addUser(username, mail, cryptedPassword);
     res.status(201).json({ message: "utilisateur créé" });
+
+    //génération du mail de confirmation d'inscription
+            transporter.sendMail(mailRegister(mail, username), (error, info) => {
+            if (error) {
+                return console.log("Erreur envoi mail :", error);
+            }
+            console.log("Mail envoyé :", info.response);
+        });
   } catch (error) {
     // gestion en cas d'erreur
     res.status(500).json({ message: "erreur lors de l'inscription", error });

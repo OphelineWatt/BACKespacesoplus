@@ -24,10 +24,13 @@ router.put('/profile/updateUsername', checkToken, updateProfileUsername);
 // route de mise à jour du mail
 router.put('/profile/updateMail', checkToken, updateProfileMail);
 
+//route de mise à jour du mdp
 router.put('/profile/updatePassword', checkToken, updatePassword);
 
+// supression par l'admin
 router.delete('/profile/deleteUsers/:idUser',checkToken,deleteProfiles);
 
+//supression de son compte
 router.delete('/profile/deleteAccount',checkToken,deleteProfile)
 
 
