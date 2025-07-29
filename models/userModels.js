@@ -50,3 +50,17 @@ export const updateMail = (mail, userId) => {
     
     return db.query(updateUsername, [mail, userId]);
 }
+
+export const getUserPassword = (idUser) => {
+    const selectUser = "SELECT password FROM users WHERE id_user = ?;";
+
+    return db.query(selectUser, [idUser])
+}
+
+export const updateUserPassword = (cryptedNewPassword, userId) => {
+     // préparation de la requete de mise à jour
+    const updatePassword = "UPDATE users SET password = ? WHERE id_user = ?;";
+
+    // Exécute la requête de mise à jour avec le nouveau mot de passe et l'ID utilisateur
+    return db.query(updatePassword, [cryptedNewPassword, userId]);
+}

@@ -164,12 +164,14 @@ export const updateProfileMail = async (req, res) => {
   // récupération de l'id de l'utilisateur à partir du token
   const userId = req.user.idUser;
 
+  
+  
   // récupération des informations à mettre à jour
   const {mail} = req.body;
-
+  
   try {
-    console.log("UserId reçu :", userId);
-
+      
+      
     const [currentUser] = await userModels.getProfileUser(userId);
 
     //vérification si le username est différent avant de faire la vérif
@@ -192,3 +194,43 @@ export const updateProfileMail = async (req, res) => {
     console.log(error);
   }
 };
+
+export const updatePassword = async (req, res) => {
+
+    // récupération de l'id de l'utilisateur à partir du token
+    const userId = req.user.idUser;
+   
+    // récupération des informations à mettre à jour
+    const {oldPassword, newPassword} = req.body;
+
+    try {
+        // récupération de l'utilisateur pour vérifier l'ancien mot de passe
+        const [result] = await userModels.getUserPassword(userId);
+
+
+        if (result.length > 0) {
+            const userData = result[0];
+
+            
+            
+            // vérification de l'ancien mot de passe
+            const checkOldPassword = await bcrypt.compare(oldPassword, userData.password);
+
+            if (checkOldPassword) {
+                // cryptage du nouveau mot de passe
+                const cryptedNewPassword = await bcrypt.hashSync(newPassword, 10);
+                // utilisation de la connexion bdd pour executer la requete
+                await userModels.updateUserPassword(cryptedNewPassword, userId);
+                res.status(200).json({message: "mot de passe mis à jour"});
+            } else {
+                res.status(403).json({message: "ancien mot de passe incorrect"});
+            }
+        } else {
+            res.status(404).json({message: "utilisateur non trouvé"});
+        }
+        
+    } catch (error) {
+        res.status(500).json({message: "erreur lors de la mise à jour du mot de passe", error});
+        console.log(error);
+    }
+}
