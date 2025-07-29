@@ -39,8 +39,14 @@ export const getAllProfile = () => {
     return db.query(getProfile);
 }
 
-export const updateUserProfile = (username, mail, userId) => {
-    const updateUser = "UPDATE users SET username = ?, mail = ? WHERE id_user = ?;";
+export const updateUsername = (username, userId) => {
+    const updateUsername = "UPDATE users SET username = ? WHERE id_user = ?;";
     
-    return db.query(updateUser, [username, mail, userId]);
+    return db.query(updateUsername, [username, userId]);
+}
+
+export const updateMail = (mail, userId) => {
+    const updateUsername = "UPDATE users SET mail = ? WHERE id_user = ?;";
+    
+    return db.query(updateUsername, [mail, userId]);
 }
