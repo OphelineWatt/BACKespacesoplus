@@ -1,5 +1,15 @@
 import db from '../configuration/bd.js';
 
+export const checkUsernameExists = (username) => {
+    const query = "SELECT id_user FROM users WHERE username = ?";
+    return db.query(query, [username]);
+};
+
+export const checkMailExists = (mail) => {
+    const query = "SELECT id_user FROM users WHERE mail = ?";
+    return db.query(query, [mail]);
+};
+
 export const addUser = (username, mail, cryptedPassword,admin) => {
 
     const insertUser = "INSERT INTO users (username, mail, password, admin) VALUES (?,?,?,0);";
@@ -8,7 +18,6 @@ export const addUser = (username, mail, cryptedPassword,admin) => {
     // et retourne le résultat de la requête
     return db.query(insertUser, [username, mail, cryptedPassword,admin]);
 }
-
 // RQT pour la connexion
 export const loginUser = (mail) => {
         const selectUser = "SELECT id_user, username, password, admin from users where mail like ?;";
@@ -28,4 +37,10 @@ export const getAllProfile = () => {
 
     // Exécute la requête de sélection avec le role 
     return db.query(getProfile);
+}
+
+export const updateUserProfile = (username, mail, userId) => {
+    const updateUser = "UPDATE users SET username = ?, mail = ? WHERE id_user = ?;";
+    
+    return db.query(updateUser, [username, mail, userId]);
 }

@@ -15,6 +15,18 @@ export const register = async (req, res) => {
     const {username, mail, password} = req.body;
 
     try {
+         // Vérifier si le username existe déjà
+        const [usernameExists] = await userModels.checkUsernameExists(username);
+        if (usernameExists.length > 0) {
+            return res.status(409).json({ message: "Nom d'utilisateur déjà utilisé" });
+        }
+        
+        // Vérifier si le mail existe déjà
+         const [mailExists] = await userModels.checkMailExists(mail);
+        if (mailExists.length > 0) {
+            return res.status(409).json({ message: "Email déjà utilisé" });
+        }
+
         // cryptage du password
         const cryptedPassword = await bcrypt.hashSync(password, 10);
 
