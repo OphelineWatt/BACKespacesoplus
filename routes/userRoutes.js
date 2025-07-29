@@ -1,6 +1,6 @@
 import express from 'express';
 import checkToken from '../middleware/checkToken.js';
-import {deleteProfiles, getProfile, getProfiles, login, register, updatePassword, updateProfileMail, updateProfileUsername} from '../controllers/userControllers.js';
+import {deleteProfile, deleteProfiles, getProfile, getProfiles, login, register, updatePassword, updateProfileMail, updateProfileUsername} from '../controllers/userControllers.js';
 
 // création du router permettant de gérer les routes liées aux utilisateurs
 const router = express.Router();
@@ -27,6 +27,8 @@ router.put('/profile/updateMail', checkToken, updateProfileMail);
 router.put('/profile/updatePassword', checkToken, updatePassword);
 
 router.delete('/profile/deleteUsers/:idUser',checkToken,deleteProfiles);
+
+router.delete('/profile/deleteAccount',checkToken,deleteProfile)
 
 
 

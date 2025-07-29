@@ -264,3 +264,22 @@ export const deleteProfiles = async (req, res) => {
     console.log(error);
   }
 };
+
+export const deleteProfile = async (req, res) => {
+  // récupération de l'id de l'utilisateur à partir du token
+  // le token est vérifié par le middleware checkToken
+  const idUser = req.user.idUser;
+
+  try {
+     await userModels.deleteAccount(idUser);
+
+    
+      res.status(200).json({message: "compte supprimé avec succès"});
+   
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "erreur lors de la récupération du profil", error });
+    console.log(error);
+  }
+};

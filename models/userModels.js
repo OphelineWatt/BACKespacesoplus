@@ -72,3 +72,11 @@ export const deleteUserByAdmin= (idUser) => {
     // Exécute la requête de sélection avec l'ID utilisateur fourni
     return db.query(deleteProfile, [idUser]);
 }
+
+export const deleteAccount= (idUser) => {
+    
+    const deleteProfile = `DELETE FROM users WHERE id_user = ?;`;
+
+    // Exécute la requête de sélection avec l'ID utilisateur fourni
+    return db.query(deleteProfile, [idUser]);
+}
