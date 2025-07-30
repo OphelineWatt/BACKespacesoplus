@@ -28,3 +28,10 @@ export const updateStatus = (id_place, status) => {
     
     return db.query(update, [id_place, status]);
 }
+
+export const deletePlace = async (id_place) => {
+    const del = "DELETE FROM places WHERE id_place = ?";
+    const [result] = await db.query(del, [id_place]);
+    return result;
+}
+

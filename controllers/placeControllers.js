@@ -105,3 +105,22 @@ export const updateStatusPlace = async (req, res) => {
         console.log(error);
     }
 }
+
+export const deletePlace = async (req, res) => {
+    const idPlace = req.params.idPlace;
+    const isAdmin = req.user.admin;
+
+    if (isAdmin !== 1) {
+    return res
+      .status(403)
+      .json({ message: "Accès interdit : réservé aux administrateurs" });
+  }
+    try {
+        await placeModels.deletePlace(idPlace);
+        
+        res.status(200).json({ message: "Place deleted successfully" });
+    } catch (error) {
+        console.error(`Error deleting place:`, error);
+        res.status(500).json({ message: "Internal server error" });
+    }
+}
