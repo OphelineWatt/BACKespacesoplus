@@ -2,7 +2,7 @@ import dotenv from "dotenv";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import * as userModels from "../models/userModels.js";
-import {transporter, mailRegister} from '../configuration/mail.js'
+import {transporter, mailRegister, mailUpdateMail, mailUpdatePassword} from '../configuration/mail.js'
 
 dotenv.config();
 
@@ -170,79 +170,77 @@ export const updateProfileUsername = async (req, res) => {
 };
 
 export const updateProfileMail = async (req, res) => {
-  // récupération de l'id de l'utilisateur à partir du token
   const userId = req.user.idUser;
+  const { mail } = req.body;
 
-  
-  
-  // récupération des informations à mettre à jour
-  const {mail} = req.body;
-  
   try {
-      
-      
     const [currentUser] = await userModels.getProfileUser(userId);
 
-    //vérification si le username est différent avant de faire la vérif
+    
+
     if (currentUser.mail !== mail) {
       const [usernameExists] = await userModels.checkMailExists(mail);
       if (usernameExists.length > 0) {
-        return res
-          .status(409)
-          .json({ message: "Mail déjà utilisé" });
+        return res.status(409).json({ message: "Mail déjà utilisé" });
       }
     }
-    // utilisation de la connexion bdd pour executer la requete
+
     await userModels.updateMail(mail, userId);
-    // envoi de la réponse
-    res.status(200).json({ message: "mail mis à jour" });
+
+
+
+    transporter.sendMail(mailUpdateMail(mail, currentUser[0].username), (error, info) => {
+      if (error) {
+        console.error("Erreur envoi mail :", error);
+        return res.status(500).json({ message: "Erreur lors de l’envoi de l’email" });
+      }
+
+      console.log("Mail envoyé :", info.response);
+      return res.status(200).json({ message: "Mail mis à jour et email envoyé" });
+    });
+
   } catch (error) {
-    res
-      .status(500)
-      .json({ message: "erreur lors de la mise à jour du mail", error });
-    console.log(error);
+    console.error("Erreur serveur :", error);
+    return res.status(500).json({ message: "erreur lors de la mise à jour du mail", error });
   }
 };
 
 export const updatePassword = async (req, res) => {
+  const userId = req.user.idUser;
+  const { oldPassword, newPassword } = req.body;
 
-    // récupération de l'id de l'utilisateur à partir du token
-    const userId = req.user.idUser;
-   
-    // récupération des informations à mettre à jour
-    const {oldPassword, newPassword} = req.body;
+  try {
+    const [result] = await userModels.getUserPassword(userId);
 
-    try {
-        // récupération de l'utilisateur pour vérifier l'ancien mot de passe
-        const [result] = await userModels.getUserPassword(userId);
-
-
-        if (result.length > 0) {
-            const userData = result[0];
-
-            
-            
-            // vérification de l'ancien mot de passe
-            const checkOldPassword = await bcrypt.compare(oldPassword, userData.password);
-
-            if (checkOldPassword) {
-                // cryptage du nouveau mot de passe
-                const cryptedNewPassword = await bcrypt.hashSync(newPassword, 10);
-                // utilisation de la connexion bdd pour executer la requete
-                await userModels.updateUserPassword(cryptedNewPassword, userId);
-                res.status(200).json({message: "mot de passe mis à jour"});
-            } else {
-                res.status(403).json({message: "ancien mot de passe incorrect"});
-            }
-        } else {
-            res.status(404).json({message: "utilisateur non trouvé"});
-        }
-        
-    } catch (error) {
-        res.status(500).json({message: "erreur lors de la mise à jour du mot de passe", error});
-        console.log(error);
+    if (result.length === 0) {
+      return res.status(404).json({ message: "Utilisateur non trouvé" });
     }
-}
+
+    const userData = result[0];
+    const checkOldPassword = await bcrypt.compare(oldPassword, userData.password);
+
+    if (!checkOldPassword) {
+      return res.status(400).json({ message: "Mot de passe incorrect" });
+    }
+
+    const cryptedNewPassword = await bcrypt.hash(newPassword, 10); // hashSync n’est pas async ;)
+    await userModels.updateUserPassword(cryptedNewPassword, userId);
+
+    // ✅ Envoi mail en async/await
+    const info = await transporter.sendMail(
+      mailUpdatePassword(userData.mail, userData.username)
+    );
+    console.log("Mail envoyé :", info.response);
+
+    return res.status(200).json({ message: "Mot de passe mis à jour et mail envoyé" });
+
+  } catch (error) {
+    console.error("Erreur updatePassword:", error);
+    return res.status(500).json({ message: "Erreur mise à jour mot de passe", error });
+  }
+};
+
+
 
 export const deleteProfiles = async (req, res) => {
   // récupération du role de l'utilisateur à partir du token

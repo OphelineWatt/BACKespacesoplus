@@ -52,7 +52,7 @@ export const updateMail = (mail, userId) => {
 }
 
 export const getUserPassword = (idUser) => {
-    const selectUser = "SELECT password FROM users WHERE id_user = ?;";
+    const selectUser = "SELECT password, username, mail FROM users WHERE id_user = ?;";
 
     return db.query(selectUser, [idUser])
 }
