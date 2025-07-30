@@ -1,7 +1,7 @@
 import db from '../configuration/bd.js';
 
 export const getAllPlaces = () => {
-    const getPlace = `SELECT name, address, website, phone_number, description, global_rating, status, day, label FROM places
+    const getPlace = `SELECT name, address, website, phone_number, description, global_rating, status, label FROM places
         INNER JOIN category on id_category = category_id;`;
 
     return db.query(getPlace);
@@ -21,4 +21,10 @@ const addPlace = "INSERT INTO places (name, address, latitude, longitude, websit
     placeData.global_rating,
     placeData.category_id
   ]);
+}
+
+export const updateStatus = (id_place, status) => {
+    const update = "UPDATE places SET status = ? WHERE id_place = ?;";
+    
+    return db.query(update, [id_place, status]);
 }

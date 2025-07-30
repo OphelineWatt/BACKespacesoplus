@@ -17,7 +17,6 @@ export const getAllPlaces = async (req, res) => {
         
     }
 }
-
 // Fonction pour effectuer le géocodage
 async function geocodeAddress(address) {
   try {
@@ -46,6 +45,7 @@ async function geocodeAddress(address) {
     throw error;
   }
 }
+
 export const addPlace = async (req, res) => {
   
   try {
@@ -80,3 +80,28 @@ export const addPlace = async (req, res) => {
       });
   }
 };
+
+export const updateStatusPlace = async (req, res) => {
+    
+    const isAdmin = req.user.admin;
+    const idPlace = req.params.idPlace;
+   
+    const {status} = req.body;
+
+    if (isAdmin !== 1) {
+    return res
+      .status(403)
+      .json({ message: "Accès interdit : réservé aux administrateurs" });
+  }
+
+    try {
+        // utilisation de la connexion bdd pour executer la requete
+        await placeModels.updateStatus(status, idPlace);
+        
+        // envoi de la réponse
+        res.status(200).json({message: "statut mis à jour"});
+    } catch (error) {
+        res.status(500).json({message: "erreur lors de la mise à jour du statut", error});
+        console.log(error);
+    }
+}
