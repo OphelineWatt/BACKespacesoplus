@@ -50,6 +50,7 @@ export const addPlace = async (req, res) => {
   
   try {
     const { name, address, website, phone_number, description, global_rating, category_id } = req.body;
+    const user_id = req.user.idUser;
 
       // Géocodage de l'adresse
     const geocodeData = await geocodeAddress(address);
@@ -64,7 +65,8 @@ export const addPlace = async (req, res) => {
       phone_number,
       description,
       global_rating,
-      category_id
+      category_id,
+      user_id
     };
 
     

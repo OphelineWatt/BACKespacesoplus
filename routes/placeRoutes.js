@@ -6,7 +6,7 @@ const router = express.Router();
 
 router.get('/places', getAllPlaces);
 
-router.post('/addplace', addPlace);
+router.post('/addplace',checkToken, addPlace);
 
 router.put('/updatestatus/:idPlace',checkToken, updateStatusPlace);
 

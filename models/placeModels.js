@@ -8,7 +8,7 @@ export const getAllPlaces = () => {
 }
 
 export const newPlace = (placeData) => {
-const addPlace = "INSERT INTO places (name, address, latitude, longitude, website, phone_number, description, global_rating, status, category_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'En attente', ?);";
+const addPlace = "INSERT INTO places (name, address, latitude, longitude, website, phone_number, description, global_rating, status, category_id, user_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'En attente', ?, ?);";
 
  return db.query(addPlace,[
     placeData.name,
@@ -19,7 +19,8 @@ const addPlace = "INSERT INTO places (name, address, latitude, longitude, websit
     placeData.phone_number,
     placeData.description,
     placeData.global_rating,
-    placeData.category_id
+    placeData.category_id,
+    placeData.user_id
   ]);
 }
 
@@ -35,3 +36,10 @@ export const deletePlace = async (id_place) => {
     return result;
 }
 
+export const getPlacesUser = (user_id) => {
+    const getPlace = `SELECT name, address, status, label FROM places
+        INNER JOIN category on id_category = category_id
+        WHERE user_id = ?;`;
+
+    return db.query(getPlace, [user_id]);
+}
