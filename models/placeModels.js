@@ -43,3 +43,5 @@ export const getPlacesUser = (user_id) => {
 
     return db.query(getPlace, [user_id]);
 }
+
+
