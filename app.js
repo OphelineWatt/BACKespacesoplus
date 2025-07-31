@@ -6,6 +6,7 @@ import userRoutes from "./routes/userRoutes.js"
 import categoryRoutes from "./routes/categoryRoutes.js"
 import placeRoutes from "./routes/placeRoutes.js"
 import favoriteRoutes from "./routes/favoriteRoutes.js"
+import reviewRoutes from "./routes/reviewRoutes.js"
 
 
 
@@ -19,7 +20,7 @@ app.use(express.json());
 dotenv.config();
 
 // utilisation des routes
-app.use("/api", userRoutes,categoryRoutes,placeRoutes,favoriteRoutes);
+app.use("/api", userRoutes,categoryRoutes,placeRoutes,favoriteRoutes, reviewRoutes);
 
 // démarrage du server sur le port défini dans le fichier .env
 app.listen(process.env.PORT, () => {
