@@ -6,13 +6,13 @@ dotenv.config()
 
 export const getAllPlaces = async (req, res) => {
     try {
-        const motos = await placeModels.getAllPlaces();
-        if (motos.length === 0) {
-            return res.status(404).json({ message: "No motos found" });
+        const places = await placeModels.getAllPlaces();
+        if (places.length === 0) {
+            return res.status(404).json({ message: "No places found" });
         }
-        res.status(200).json(motos);
+        res.status(200).json(places);
     } catch (error) {
-        console.error("Error fetching all motos:", error);
+        console.error("Error fetching all places:", error);
         res.status(500).json({ message: "Internal server error" });
         
     }
