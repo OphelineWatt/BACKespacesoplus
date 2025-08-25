@@ -88,7 +88,9 @@ export const updateStatusPlace = async (req, res) => {
     const isAdmin = req.user.admin;
     const idPlace = req.params.idPlace;
    
+    
     const {status} = req.body;
+    console.log(isAdmin, idPlace, status);
 
     if (isAdmin !== 1) {
     return res
@@ -132,11 +134,11 @@ export const getPlacesByIdUser = async (req, res) => {
     const idUser = req.user.idUser
 
     try {
-        const moto = await placeModels.getPlacesUser(idUser);
-        if (moto.length === 0) {
+        const place = await placeModels.getPlacesUser(idUser);
+        if (place.length === 0) {
             return res.status(404).json({ message: `Pas de contribution trouvé` });
         }
-        res.status(200).json(moto);       
+        res.status(200).json(place);       
     } catch (error) {
         console.error(`Error fetching contribution:`, error);
         res.status(500).json({ message: "Internal server error" });

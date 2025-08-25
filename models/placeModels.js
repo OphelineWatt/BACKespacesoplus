@@ -1,8 +1,9 @@
 import db from '../configuration/bd.js';
 
 export const getAllPlaces = () => {
-    const getPlace = `SELECT name, address, website, phone_number, description, global_rating, status,latitude, longitude, label FROM places
-        INNER JOIN category on id_category = category_id;`;
+    const getPlace = `SELECT id_place, name, address, website, phone_number, description, global_rating, status,latitude, longitude, label FROM places
+        INNER JOIN category on id_category = category_id
+        WHERE status = 'Validée';`;
 
     return db.query(getPlace);
 }
@@ -37,7 +38,7 @@ export const deletePlace = async (id_place) => {
 }
 
 export const getPlacesUser = (user_id) => {
-    const getPlace = `SELECT name, address, status, label FROM places
+    const getPlace = `SELECT id_place, name, address, status, label FROM places
         INNER JOIN category on id_category = category_id
         WHERE user_id = ?;`;
 
