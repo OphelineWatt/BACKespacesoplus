@@ -6,6 +6,7 @@ const router = express.Router();
 
 router.post('/addReview',checkToken, addReview);
 
+// avis + note moyenne
 router.get('/reviewsplace/:placeId', getReviewUsers);
 
 router.put('/updatereview/:idReview',checkToken, updateReview);

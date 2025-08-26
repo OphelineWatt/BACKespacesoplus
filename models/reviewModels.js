@@ -16,12 +16,25 @@ export const getReviewById = async (idReview) => {
 };
 
 export const getReviewsByPlace= (placeId) => {
-    const get = `SELECT date, text, rating, place_id, username FROM reviews
+    const get = `SELECT id_reviews, date, text, rating, place_id, username FROM reviews
     INNER JOIN users on id_user = user_id 
     WHERE place_id = ?;`;
 
     return db.query(get,[placeId]);
 }
+
+export const getAverageRating = async (placeId) => {
+  const [rows] = await db.query(
+    `SELECT AVG(rating) AS averageRating
+     FROM reviews
+     WHERE place_id = ?`,
+    [placeId]
+  );
+  // Si pas d’avis, avg peut être null
+  const avg = rows[0].averageRating;
+  return avg !== null ? Number(avg).toFixed(1) : '0.0';
+};
+
 
 export const updateReview = (id_review, rating, text) => {
     const update = "UPDATE reviews SET rating = ?, text = ?  WHERE id_reviews = ?;";
