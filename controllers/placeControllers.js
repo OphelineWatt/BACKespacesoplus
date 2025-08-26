@@ -17,6 +17,20 @@ export const getAllPlaces = async (req, res) => {
         
     }
 }
+
+export const getValid = async (req, res) => {
+    try {
+        const places = await placeModels.getValidatedPlace();
+        if (places.length === 0) {
+            return res.status(404).json({ message: "No places found" });
+        }
+        res.status(200).json(places);
+    } catch (error) {
+        console.error("Error fetching all places:", error);
+        res.status(500).json({ message: "Internal server error" });
+        
+    }
+}
 // Fonction pour effectuer le géocodage
 async function geocodeAddress(address) {
   try {

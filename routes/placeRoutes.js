@@ -1,11 +1,14 @@
 import express from 'express';
-import { addPlace, deletePlace, getAllPlaces, getPlacesByIdUser, updateStatusPlace } from '../controllers/placeControllers.js';
+import { addPlace, deletePlace, getAllPlaces, getPlacesByIdUser, getValid, updateStatusPlace } from '../controllers/placeControllers.js';
 import checkToken from '../middleware/checkToken.js';
 
 const router = express.Router();
 
 // visualisation des lieux
 router.get('/places', getAllPlaces);
+
+// récupérations des lieux avec le statut validé
+router.get('/validatedPlaces', getValid);
 
 router.post('/addplace',checkToken, addPlace);
 

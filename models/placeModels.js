@@ -2,6 +2,13 @@ import db from '../configuration/bd.js';
 
 export const getAllPlaces = () => {
     const getPlace = `SELECT id_place, name, address, website, phone_number, description, global_rating, status,latitude, longitude, label FROM places
+        INNER JOIN category on id_category = category_id;`;
+
+    return db.query(getPlace);
+}
+
+export const getValidatedPlace = () => {
+    const getPlace = `SELECT id_place, name, address, website, phone_number, description, global_rating, status,latitude, longitude, label FROM places
         INNER JOIN category on id_category = category_id
         WHERE status = 'Validée';`;
 
