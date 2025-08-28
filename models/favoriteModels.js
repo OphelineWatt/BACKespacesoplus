@@ -18,8 +18,8 @@ export const getFavoriteById= (userId) => {
     return db.query(get,[userId]);
 }
 
-export const deleteFavorite = async (idFavorite) => {
-    const del = "DELETE FROM favorites WHERE id_favorite = ?";
-    const [result] = await db.query(del, [idFavorite]);
+export const deleteFavorite = async (idPlace, idUser) => {
+    const del = "DELETE FROM favorites WHERE place_id = ? AND user_id = ?;";
+    const [result] = await db.query(del, [idPlace, idUser]);
     return result;
 }

@@ -3,10 +3,9 @@ import checkToken from '../middleware/checkToken.js';
 import { addReview, deleteReview, getReviewUsers, updateReview } from '../controllers/reviewControllers.js';
 
 const router = express.Router();
-
+// + calcul de la note moyenne des lieux
 router.post('/addReview',checkToken, addReview);
 
-// avis + note moyenne
 router.get('/reviewsplace/:placeId', getReviewUsers);
 
 router.put('/updatereview/:idReview',checkToken, updateReview);

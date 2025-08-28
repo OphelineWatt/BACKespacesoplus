@@ -29,4 +29,5 @@ app.listen(process.env.PORT, () => {
   console.log("Database connection established");
   }
 });
+
 export default app;
