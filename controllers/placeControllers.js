@@ -6,13 +6,27 @@ dotenv.config()
 
 export const getAllPlaces = async (req, res) => {
     try {
-        const motos = await placeModels.getAllPlaces();
-        if (motos.length === 0) {
-            return res.status(404).json({ message: "No motos found" });
+        const places = await placeModels.getAllPlaces();
+        if (places.length === 0) {
+            return res.status(404).json({ message: "No places found" });
         }
-        res.status(200).json(motos);
+        res.status(200).json(places);
     } catch (error) {
-        console.error("Error fetching all motos:", error);
+        console.error("Error fetching all places:", error);
+        res.status(500).json({ message: "Internal server error" });
+        
+    }
+}
+
+export const getValid = async (req, res) => {
+    try {
+        const places = await placeModels.getValidatedPlace();
+        if (places.length === 0) {
+            return res.status(404).json({ message: "No places found" });
+        }
+        res.status(200).json(places);
+    } catch (error) {
+        console.error("Error fetching all places:", error);
         res.status(500).json({ message: "Internal server error" });
         
     }
@@ -88,7 +102,9 @@ export const updateStatusPlace = async (req, res) => {
     const isAdmin = req.user.admin;
     const idPlace = req.params.idPlace;
    
+    
     const {status} = req.body;
+    console.log(isAdmin, idPlace, status);
 
     if (isAdmin !== 1) {
     return res
@@ -132,11 +148,11 @@ export const getPlacesByIdUser = async (req, res) => {
     const idUser = req.user.idUser
 
     try {
-        const moto = await placeModels.getPlacesUser(idUser);
-        if (moto.length === 0) {
+        const place = await placeModels.getPlacesUser(idUser);
+        if (place.length === 0) {
             return res.status(404).json({ message: `Pas de contribution trouvé` });
         }
-        res.status(200).json(moto);       
+        res.status(200).json(place);       
     } catch (error) {
         console.error(`Error fetching contribution:`, error);
         res.status(500).json({ message: "Internal server error" });

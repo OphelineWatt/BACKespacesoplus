@@ -1,8 +1,16 @@
 import db from '../configuration/bd.js';
 
 export const getAllPlaces = () => {
-    const getPlace = `SELECT name, address, website, phone_number, description, global_rating, status, label FROM places
+    const getPlace = `SELECT id_place, name, address, website, phone_number, description, global_rating, status,latitude, longitude, label FROM places
         INNER JOIN category on id_category = category_id;`;
+
+    return db.query(getPlace);
+}
+
+export const getValidatedPlace = () => {
+    const getPlace = `SELECT id_place, name, address, website, phone_number, description, global_rating, status,latitude, longitude, label FROM places
+        INNER JOIN category on id_category = category_id
+        WHERE status = 'Validée';`;
 
     return db.query(getPlace);
 }
@@ -30,6 +38,12 @@ export const updateStatus = (id_place, status) => {
     return db.query(update, [id_place, status]);
 }
 
+export const updateGlobalRating = (global_rating, id_place ) => {
+    const update = "UPDATE places SET global_rating = ? WHERE id_place = ?;";
+    
+    return db.query(update, [ global_rating, id_place]);
+}
+
 export const deletePlace = async (id_place) => {
     const del = "DELETE FROM places WHERE id_place = ?";
     const [result] = await db.query(del, [id_place]);
@@ -37,7 +51,7 @@ export const deletePlace = async (id_place) => {
 }
 
 export const getPlacesUser = (user_id) => {
-    const getPlace = `SELECT name, address, status, label FROM places
+    const getPlace = `SELECT id_place, name, address, status, label FROM places
         INNER JOIN category on id_category = category_id
         WHERE user_id = ?;`;
 
