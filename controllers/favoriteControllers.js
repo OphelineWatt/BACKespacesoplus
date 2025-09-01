@@ -8,8 +8,6 @@ export const addFavorite = async (req, res) => {
     const userId = req.user.idUser;
     const { placeId } = req.body;
 
-    console.log(userId);
-
     await favoriteModels.addFavorites( userId,placeId);
 
     res.status(200).json({ message: "supression du favori ok" });
