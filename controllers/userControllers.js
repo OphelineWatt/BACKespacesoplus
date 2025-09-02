@@ -71,7 +71,7 @@ export const login = async (req, res) => {
           { expiresIn: "6h" }
         );
 
-        res.status(201).json({
+        res.status(200).json({
           message: "connexion autorisé",
           token: token,
         });
@@ -82,7 +82,7 @@ export const login = async (req, res) => {
       res.status(104).json({ message: "utilisateur inconnu" });
     }
   } catch (error) {
-    res.status(500).json({ message: "erreur lors de la connexion", error });
+    res.status(500).json({ message: "erreur lors de la connexion", erreur: error });
     console.log(error);
   }
 };
