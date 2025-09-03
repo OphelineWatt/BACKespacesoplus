@@ -80,3 +80,15 @@ export const deleteAccount= (idUser) => {
     // Exécute la requête de sélection avec l'ID utilisateur fourni
     return db.query(deleteProfile, [idUser]);
 }
+
+export const forgottenPassword = async (mail) => {
+    const checkEmail = "SELECT id_user, username, mail FROM users WHERE mail = ?";
+    const [result] = await db.query(checkEmail, [mail]);
+    return result;
+}
+
+export const passwordReset = async (password,idUser) => {
+    const update = "UPDATE users SET password = ? WHERE id_user = ?";
+    const [result] = await db.query(update, [ password,idUser]);
+    return result;
+}

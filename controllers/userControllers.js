@@ -2,7 +2,7 @@ import dotenv from "dotenv";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import * as userModels from "../models/userModels.js";
-import {transporter, mailRegister, mailUpdateMail, mailUpdatePassword} from '../configuration/mail.js'
+import {transporter, mailRegister, mailUpdateMail, mailUpdatePassword, mailForgottenPassword} from '../configuration/mail.js'
 
 dotenv.config();
 
@@ -240,8 +240,6 @@ export const updatePassword = async (req, res) => {
   }
 };
 
-
-
 export const deleteProfiles = async (req, res) => {
   // récupération du role de l'utilisateur à partir du token
   // le token est vérifié par le middleware checkToken
@@ -290,3 +288,57 @@ export const deleteProfile = async (req, res) => {
     console.log(error);
   }
 };
+
+export const forgottenPassword = async (req, res) => {
+    const { mail } = req.body;
+
+    try {
+        const user = await userModels.forgottenPassword(mail);
+
+        if (user.length === 0) {
+            return res.status(404).json({ message: "mail not found" });
+        }
+
+        const tokenReset = jwt.sign({ idUser: user[0].id_user}, process.env.SECRET_KEY, { expiresIn: '1h' });
+
+        transporter.sendMail(mailForgottenPassword(mail, user[0].username, tokenReset), (error, info) => {
+            if (error) {
+                return console.log("Erreur envoi mail :", error);
+            }
+            console.log("Mail envoyé :", info.response);
+        });
+
+
+        // Logique pour envoyer un email de réinitialisation de mot de passe
+
+        res.status(200).json({ message: "Email de réinitialisation envoyé" });
+
+    } catch (error) {
+        console.error("Erreur lors de la récupération du mot de passe :", error);
+        res.status(500).json({ message: "Erreur serveur" });
+    }
+};
+
+
+export const passwordReset = async (req, res) => {
+    const { password } = req.body;
+    const idUser = req.user.idUser;
+
+
+    try {
+        const cryptedPassword = bcrypt.hashSync(password, 10);
+
+
+        const result = await userModels.passwordReset( cryptedPassword, idUser);
+
+        if (result.affectedRows === 0) {
+            return res.status(404).json({ message: "Utilisateur non trouvé" });
+        }
+
+        res.status(200).json({ message: "Mot de passe réinitialisé avec succès" });
+
+    } catch (error) {
+        console.error("Erreur lors de la réinitialisation du mot de passe :", error);
+        res.status(500).json({ message: "Erreur serveur" });
+    }
+}

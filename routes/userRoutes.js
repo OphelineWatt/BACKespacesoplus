@@ -1,6 +1,6 @@
 import express from 'express';
 import checkToken from '../middleware/checkToken.js';
-import {deleteProfile, deleteProfiles, getProfile, getProfiles, login, register, updatePassword, updateProfileMail, updateProfileUsername} from '../controllers/userControllers.js';
+import {deleteProfile, deleteProfiles, forgottenPassword, getProfile, getProfiles, login, passwordReset, register, updatePassword, updateProfileMail, updateProfileUsername} from '../controllers/userControllers.js';
 
 // création du router permettant de gérer les routes liées aux utilisateurs
 const router = express.Router();
@@ -33,6 +33,8 @@ router.delete('/profile/deleteUsers/:idUser',checkToken,deleteProfiles);
 //supression de son compte
 router.delete('/profile/deleteAccount',checkToken,deleteProfile)
 
+router.post('/forgottenPassword', forgottenPassword);
 
+router.post('/passwordReset', checkToken, passwordReset);
 
 export default router;
