@@ -10,14 +10,15 @@ export const addReview = (text, rating, user_id, place_id) => {
 }
 
 export const getReviewById = async (idReview) => {
-  const query = "SELECT user_id FROM reviews WHERE id_reviews = ?";
+  const query = "SELECT user_id, place_id FROM reviews WHERE id_reviews = ?";
   const [rows] = await db.query(query, [idReview]);
   return rows[0];
 };
 
 export const getReviewsByPlace= (placeId) => {
-    const get = `SELECT id_reviews, date, text, rating, place_id, user_id, username FROM reviews
-    INNER JOIN users on id_user = user_id 
+    const get = `SELECT id_reviews, date, text, rating, place_id, reviews.user_id, username, name FROM reviews
+    INNER JOIN users on users.id_user = reviews.user_id 
+    INNER Join places on id_place = place_id
     WHERE place_id = ?;`;
 
     return db.query(get,[placeId]);

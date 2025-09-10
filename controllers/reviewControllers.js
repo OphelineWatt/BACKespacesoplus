@@ -45,7 +45,6 @@ export const getReviewUsers = async (req, res) => {
         .json({ message: `Pas d'avis trouvé pour ce lieu` });
     }
 
-    console.log(reviews);
 
     // Formatage des dates
     const formattedReviews = reviews.map((review) => ({
@@ -91,11 +90,15 @@ export const deleteReview = async (req, res) => {
   try {
     const existingReview = await reviewModels.getReviewById(idReview);
 
+    const place_id = existingReview.place_id;
+
+    
+
     if (!existingReview) {
       return res.status(404).json({ message: "Avis introuvable" });
     }
 
-    if (existingReview.user_id !== idUser && !isAdmin) {
+    if (existingReview.user_id !== idUser && isAdmin == 0) {
       return res.status(403).json({
         message:
           "Accès interdit : vous n'êtes pas autorisé à supprimer cet avis",
@@ -103,6 +106,11 @@ export const deleteReview = async (req, res) => {
     }
 
     const result = await reviewModels.deleteReviewById(idReview);
+
+    const averageRating = await reviewModels.getAverageRating(place_id);
+
+    await updateGlobalRating(averageRating, place_id);
+
 
     if (result.affectedRows === 0) {
       return res
